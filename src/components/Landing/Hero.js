@@ -1,28 +1,27 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Hero.css';
 
 function Hero() {
   return (
-    <div className="hero">
+    <div className="hero" id="inicio">
       <div className="hero-container">
-        {/* Columna izquierda - Imagen */}
         <div className="hero-image">
           <div className="image-wrapper">
             <img 
               src="https://globaltranstoledo.com/wp-content/uploads/2023/12/enviar-paquetes-correctamente-scaled.jpg"
-              alt="Paquete envío"
+              alt="Envío de paquetes"
               className="hero-img"
             />
           </div>
         </div>
 
-        {/* Columna derecha - Texto y botón */}
         <div className="hero-content">
           <p className="hero-subtitle">¿Deseas ordenar un paquete?</p>
           <h1 className="hero-title">¡Cotízalo!</h1>
-          <a href="/cotizador" className="hero-btn">
+          <Link to="/cotizador" className="hero-btn">
             Cotizar envío
-          </a>
+          </Link>
         </div>
       </div>
     </div>

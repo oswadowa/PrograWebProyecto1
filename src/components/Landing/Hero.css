@@ -4,6 +4,19 @@
   display: flex;
   align-items: center;
   padding: 2rem;
+  position: relative;
+}
+
+/* Efecto fade en la parte inferior */
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, rgba(74, 80, 197, 0), #ffffff);
+  pointer-events: none;
 }
 
 .hero-container {
@@ -14,6 +27,8 @@
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
+  position: relative;
+  z-index: 1;
 }
 
 /* Imagen - Tamaño controlado */
@@ -35,7 +50,6 @@
 
 .hero-img {
   width: 100%;
-  max-width: 400px;
   height: auto;
   display: block;
   object-fit: cover;
@@ -91,6 +105,10 @@
     min-height: auto;
   }
 
+  .hero::after {
+    height: 60px;
+  }
+
   .hero-container {
     grid-template-columns: 1fr;
     gap: 2rem;
@@ -122,5 +140,53 @@
 @media (min-width: 1200px) {
   .image-wrapper {
     max-width: 450px;
+  }
+}
+
+/* Animaciones existentes */
+.hero {
+  animation: fadeIn 0.8s ease;
+}
+
+.hero-image {
+  opacity: 0;
+  transform: translateX(-30px);
+  animation: slideInLeft 0.8s ease 0.2s forwards;
+}
+
+.hero-content {
+  opacity: 0;
+  transform: translateX(30px);
+  animation: slideInRight 0.8s ease 0.2s forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
   }
 }
