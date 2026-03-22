@@ -1,0 +1,40 @@
+.quote-page {
+  min-height: calc(100vh - 70px);
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+  padding: 4rem 2rem;
+}
+
+.quote-page .container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #3d1a8c;
+  margin-bottom: 1rem;
+}
+
+.page-description {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 3rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .quote-page {
+    padding: 2rem 1rem;
+  }
+
+  .page-title {
+    font-size: 2rem;
+  }
+
+  .page-description {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+}
