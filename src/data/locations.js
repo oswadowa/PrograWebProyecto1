@@ -17,7 +17,7 @@ export const locationsData = {
   },
   "Guatemala": {
     provincias: {
-      "Guatemala": ["Zona 1", "Zona 10", "Zona 14"],
+      "Guatemala": ["Guatemala", "Mixco", "Palencia"],
       "Quetzaltenango": ["Centro", "Zona 3", "Zona 5"],
       "Sacatepéquez": ["Antigua", "Jocotenango", "Ciudad Vieja"]
     }

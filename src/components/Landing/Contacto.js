@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { saveContactToGoogleSheets } from '../../services/SheetContacto';
 import './Contacto.css';
 
 function Contacto() {
@@ -11,6 +12,7 @@ function Contacto() {
 
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const paisesContacto = [
     {
@@ -92,7 +94,6 @@ function Contacto() {
       ...prev,
       [name]: value
     }));
-    // Limpiar error del campo cuando el usuario empieza a escribir
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -101,25 +102,61 @@ function Contacto() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (validateForm()) {
-      // Simular envío a Google Sheets
-      console.log('Datos del formulario:', formData);
-      setSubmitted(true);
-      setFormData({
-        nombre: '',
-        email: '',
-        telefono: '',
-        mensaje: ''
-      });
+    console.log('🔵 ========== FORMULARIO ENVIADO ==========');
+    console.log('🔵 Datos del formulario:', formData);
+    
+    const isValid = validateForm();
+    console.log('🔵 Validación:', isValid ? '✅ PASÓ' : '❌ FALLÓ');
+    
+    if (isValid) {
+      setIsSaving(true);
       
-      // Ocultar mensaje después de 5 segundos
-      setTimeout(() => {
-        setSubmitted(false);
-      }, 5000);
+      const dataToSave = {
+        fecha: new Date().toLocaleString('es-GT', { timeZone: 'America/Guatemala' }),
+        nombre: formData.nombre,
+        email: formData.email,
+        telefono: formData.telefono,
+        mensaje: formData.mensaje
+      };
+      
+      console.log('🔵 Datos a guardar:', dataToSave);
+      console.log('🔵 Llamando a saveContactToGoogleSheets...');
+      
+      try {
+        const response = await saveContactToGoogleSheets(dataToSave);
+        console.log('🔵 Respuesta del servicio:', response);
+        
+        if (response.success) {
+          console.log('🔵 ✅ ÉXITO - Datos guardados correctamente');
+          setSubmitted(true);
+          setFormData({
+            nombre: '',
+            email: '',
+            telefono: '',
+            mensaje: ''
+          });
+          
+          setTimeout(() => {
+            setSubmitted(false);
+          }, 5000);
+        } else {
+          console.log('🔵 ❌ ERROR en respuesta:', response.error);
+          alert('❌ Error al enviar el mensaje: ' + (response.error || 'Error desconocido'));
+        }
+      } catch (error) {
+        console.log('🔵 ❌ EXCEPCIÓN capturada:', error);
+        alert('❌ Error: ' + error.message);
+      }
+      
+      setIsSaving(false);
+    } else {
+      console.log('🔵 Errores de validación:', errors);
     }
+    
+    console.log('🔵 ========== FIN DEL PROCESO ==========');
   };
 
   return (
@@ -234,8 +271,8 @@ function Contacto() {
                 {errors.mensaje && <span className="error-text">{errors.mensaje}</span>}
               </div>
 
-              <button type="submit" className="submit-btn">
-                Enviar mensaje
+              <button type="submit" className="submit-btn" disabled={isSaving}>
+                {isSaving ? 'Enviando...' : 'Enviar mensaje'}
               </button>
             </form>
           </div>

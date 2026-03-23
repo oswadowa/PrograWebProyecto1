@@ -1,15 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { saveToGoogleSheets } from '../../services/googleSheets';
 import './ConfirmForm.css';
 
 function ConfirmForm({ result, onConfirm }) {
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState(null);
+
   const displayResult = result || {
     total: 0,
     pesoKg: 0,
-    costoBase: 0,
-    costoPorPeso: 0,
-    costoDistancia: 0,
-    sumaBase: 0,
-    regionMultiplier: 1,
     distancia: 0,
     tiempoEstimado: '---',
     servicio: 'standard',
@@ -36,14 +35,48 @@ function ConfirmForm({ result, onConfirm }) {
     return regions[regionCode] || regionCode;
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!result) {
       alert('Por favor calcula el costo primero');
       return;
     }
-    if (onConfirm) {
-      onConfirm();
+
+    setIsSaving(true);
+    setSaveStatus(null);
+
+    // Preparar datos para guardar
+    const dataToSave = {
+      fecha: new Date().toLocaleString('es-GT', { timeZone: 'America/Guatemala' }),
+      origen: `${displayResult.origen || '---'}`,
+      destino: `${displayResult.destino || '---'}`,
+      peso: `${displayResult.pesoKg.toFixed(2)} kg`,
+      distancia: `${displayResult.distancia} km`,
+      servicio: getServicioText(displayResult.servicio),
+      tiempo: displayResult.tiempoEstimado,
+      total: `Q${displayResult.total.toFixed(2)}`
+    };
+
+    console.log('Datos a guardar:', dataToSave);
+
+    // Guardar en Google Sheets
+    const response = await saveToGoogleSheets(dataToSave);
+
+    if (response.success) {
+      setSaveStatus('success');
+      alert('✅ Envío confirmado. Los datos se han guardado correctamente.');
+      if (onConfirm) {
+        onConfirm(dataToSave);
+      }
+    } else {
+      setSaveStatus('error');
+      alert('❌ Error al guardar los datos. Por favor intenta nuevamente.');
     }
+
+    setIsSaving(false);
+
+    setTimeout(() => {
+      setSaveStatus(null);
+    }, 3000);
   };
 
   return (
@@ -87,10 +120,6 @@ function ConfirmForm({ result, onConfirm }) {
             <span>{getServicioText(displayResult.servicio)}</span>
           </div>
           <div className="detail-row">
-            <span>💰 Multiplicador región:</span>
-            <span>{displayResult.regionMultiplier}x</span>
-          </div>
-          <div className="detail-row">
             <span>⏱️ Tiempo estimado:</span>
             <span>{displayResult.tiempoEstimado}</span>
           </div>
@@ -109,8 +138,24 @@ function ConfirmForm({ result, onConfirm }) {
         </div>
       </div>
 
-      <button className="btn-confirm" onClick={handleConfirm}>
-        Confirmar envío
+      {saveStatus === 'success' && (
+        <div className="save-success">
+          ✅ Datos guardados correctamente en Google Sheets
+        </div>
+      )}
+      
+      {saveStatus === 'error' && (
+        <div className="save-error">
+          ❌ Error al guardar. Verifica la conexión.
+        </div>
+      )}
+
+      <button 
+        className="btn-confirm" 
+        onClick={handleConfirm}
+        disabled={isSaving}
+      >
+        {isSaving ? 'Guardando...' : 'Confirmar envío'}
       </button>
     </div>
   );
