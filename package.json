@@ -1,6 +1,7 @@
 {
   "name": "proyecto_1",
   "version": "0.1.0",
+  "homepage": "https://oswadowa.github.io/PrograWebProyecto1",
   "private": true,
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
@@ -8,6 +9,7 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.13.6",
+    "gh-pages": "^6.3.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1",
@@ -15,6 +17,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
